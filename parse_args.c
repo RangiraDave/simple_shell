@@ -16,45 +16,45 @@ int check_args(char **args);
  */
 int invoke(char **args, char **front, int *executed_ret)
 {
-	int r, ind;
+	int r, i;
 
 	if (!args[0])
 		return (*executed_ret);
-	for (ind = 0; args[ind]; ind++)
+	for (i = 0; args[i]; i++)
 	{
-		if (_strncmp(args[ind], "||", 2) == 0)
+		if (_strncmp(args[i], "||", 2) == 0)
 		{
-			free(args[ind]);
-			args[index] = NULL;
+			free(args[i]);
+			args[i] = NULL;
 			args = replace_aliases(args);
 			r = execute_args(args, front, executed_ret);
 			if (*executed_ret != 0)
 			{
-				args = &args[++ind];
-				ind = 0;
+				args = &args[++i];
+				i = 0;
 			}
 			else
 			{
-				for (ind++; args[ind]; ind++)
-					free(args[ind]);
+				for (i++; args[i]; i++)
+					free(args[i]);
 				return (r);
 			}
 		}
-		else if (_strncmp(args[ind], "&&", 2) == 0)
+		else if (_strncmp(args[i], "&&", 2) == 0)
 		{
-			free(args[ind]);
-			args[ind] = NULL;
+			free(args[i]);
+			args[i] = NULL;
 			args = replace_aliases(args);
 			r = execute_args(args, front, executed_ret);
 			if (*executed_ret == 0)
 			{
-				args = &args[++ind];
-				ind = 0;
+				args = &args[++i];
+				i = 0;
 			}
 			else
 			{
-				for (ind++; args[ind]; ind++)
-					free(args[ind]);
+				for (i++; args[i]; i++)
+					free(args[i]);
 				return (r);
 			}
 		}
@@ -109,38 +109,38 @@ int execute_args(char **args, char **front, int *executed_ret)
  */
 int handle_args(int *executed_ret)
 {
-	int r = 0, ind;
-	char **ar, *bulk = NULL, **front;
+	int r = 0, i;
+	char **av, *input = NULL, **front;
 
-	line = get_args(line, executed_ret);
-	if (!bulk)
+	input = get_args(input, executed_ret);
+	if (!input)
 		return (END_OF_FILE);
 
-	ar = _strtok(bulk, " ");
-	free(bulk);
-	if (!args)
+	av = _strtok(input, " ");
+	free(input);
+	if (!av)
 		return (r);
-	if (check_args(ar) != 0)
+	if (check_args(av) != 0)
 	{
 		*executed_ret = 2;
-		free_args(ar, ar);
+		free_args(av, av);
 		return (*executed_ret);
 	}
-	front = ar;
+	front = av;
 
-	for (ind = 0; ar[ind]; ind++)
+	for (i = 0; av[i]; i++)
 	{
-		if (_strncmp(ar[ind], ";", 1) == 0)
+		if (_strncmp(av[i], ";", 1) == 0)
 		{
-			free(ar[ind]);
-			ar[ind] = NULL;
-			r = invoke(ar, front, executed_ret);
-			ar = &ar[++ind];
-			ind = 0;
+			free(av[i]);
+			av[i] = NULL;
+			r = invoke(av, front, executed_ret);
+			av = &av[++i];
+			i = 0;
 		}
 	}
-	if (ar)
-		r = invoke(ar, front, executed_ret);
+	if (av)
+		r = invoke(av, front, executed_ret);
 
 	free(front);
 	return (r);

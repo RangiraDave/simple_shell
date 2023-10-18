@@ -16,7 +16,7 @@ int shell_help(char **args, char __attribute__((__unused__)) **front);
 
 int (*get_builtins(char *command))(char **args, char **front)
 {
-	builtin_list fxs[] = {
+	builtin_list funcs[] = {
 		{ "exit", shell_exit },
 		{ "env", shell_env },
 		{ "setenv", shell_setenv },
@@ -26,14 +26,14 @@ int (*get_builtins(char *command))(char **args, char **front)
 		{ "help", shell_help },
 		{ NULL, NULL }
 	};
-	int a;
+	int i;
 
-	for (a = 0; fxs[a].b_node; a++)
+	for (i = 0; funcs[i].b_node; i++)
 	{
-		if (_strcmp(fxs[a].b_node, command) == 0)
+		if (_strcmp(funcs[i].b_node, command) == 0)
 			break;
 	}
-	return (fxs[a].f);
+	return (funcs[i].f);
 }
 
 /**
@@ -48,21 +48,21 @@ int (*get_builtins(char *command))(char **args, char **front)
 
 int shell_exit(char **args, char **front)
 {
-	unsigned int numb = 0, maxima = 1 << (sizeof(int) * 8 - 1);
-	int x;
-	int len_int = 10;
+	unsigned int num = 0, max = 1 << (sizeof(int) * 8 - 1);
+	int i;
+	int length_int = 10;
 
 	if (args[0])
 	{
 		if (args[0][0] == '+')
 		{
-			x = 1;
-			len_int++;
+			i = 1;
+			length_int++;
 		}
-		for (; args[0][x]; x++)
+		for (; args[0][i]; i++)
 		{
-			if (x <= len_int && args[0][x] >= '0' && args[0][x] <= '9')
-				numb = (numb * 10) + (args[0][x] - '0');
+			if (i <= length_int && args[0][i] >= '0' && args[0][i] <= '9')
+				num = (num * 10) + (args[0][i] - '0');
 			else
 				return (create_error(--args, 2));
 		}
@@ -71,13 +71,13 @@ int shell_exit(char **args, char **front)
 	{
 		return (-3);
 	}
-	if (numb > maxima - 1)
+	if (num > max - 1)
 		return (create_error(--args, 2));
 	args -= 1;
 	free_args(args, front);
 	free_env();
 	free_alias_list(aliases);
-	exit(numb);
+	exit(num);
 }
 
 /**
@@ -91,10 +91,10 @@ int shell_exit(char **args, char **front)
 
 int shell_cd(char **args, char __attribute__((__unused__)) **front)
 {
-	char **directory_info;
-	char *fresh_line = "\n";
+	char **dir_info;
+	char *new_line = "\n";
 	char *oldpwd = NULL, *pwd = NULL;
-	struct stat directory;
+	struct stat dir;
 
 	oldpwd = getcwd(oldpwd, 0);
 	if (!oldpwd)
@@ -138,27 +138,27 @@ int shell_cd(char **args, char __attribute__((__unused__)) **front)
 	if (!pwd)
 		return (-1);
 
-	directory_info = malloc(sizeof(char *) * 2);
-	if (!directory_info)
+	dir_info = malloc(sizeof(char *) * 2);
+	if (!dir_info)
 		return (-1);
 
-	directory_info[0] = "OLDPWD";
-	directory_info[1] = oldpwd;
-	if (shell_setenv(direrectory_info, directory_info) == -1)
+	dir_info[0] = "OLDPWD";
+	dir_info[1] = oldpwd;
+	if (shell_setenv(dir_info, dir_info) == -1)
 		return (-1);
 
-	directory_info[0] = "PWD";
-	directory_info[1] = pwd;
-	if (shell_setenv(directory_info, directory_info) == -1)
+	dir_info[0] = "PWD";
+	dir_info[1] = pwd;
+	if (shell_setenv(dir_info, dir_info) == -1)
 		return (-1);
 	if (args[0] && args[0][0] == '-' && args[0][1] != '-')
 	{
 		write(STDOUT_FILENO, pwd, _strlen(pwd));
-		write(STDOUT_FILENO, fresh_line, 1);
+		write(STDOUT_FILENO, new_line, 1);
 	}
 	free(oldpwd);
 	free(pwd);
-	free(directory_info);
+	free(dir_info);
 	return (0);
 }
 
@@ -174,7 +174,7 @@ int shell_cd(char **args, char __attribute__((__unused__)) **front)
 
 int shell_help(char **args, char __attribute__((__unused__)) **front)
 {
-	char *look = args[0];
+	char *name = args[0];
 
 	if (!args[0])
 		helper_all();
@@ -193,7 +193,7 @@ int shell_help(char **args, char __attribute__((__unused__)) **front)
 	else if (_strcmp(args[0], "help") == 0)
 		helper_help();
 	else
-		write(STDERR_FILENO, look, _strlen(look));
+		write(STDERR_FILENO, name, _strlen(name));
 
 	return (0);
 }
