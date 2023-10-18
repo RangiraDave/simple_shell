@@ -18,33 +18,33 @@ void free_list(list_t *head);
 
 alias_list *add_alias_end(alias_list **head, char *name, char *value)
 {
-	alias_list *new_node = malloc(sizeof(alias_list));
-	alias_list *last;
+	alias_list *node = malloc(sizeof(alias_list));
+	alias_list *prev;
 
-	if (!new_node)
+	if (!node)
 		return (NULL);
 
-	new_node->next = NULL;
-	new_node->a_node = malloc(sizeof(char) * (_strlen(name) + 1));
-	if (!new_node->a_node)
+	node->next = NULL;
+	node->a_node = malloc(sizeof(char) * (_strlen(name) + 1));
+	if (!node->a_node)
 	{
-		free(new_node);
+		free(node);
 		return (NULL);
 	}
-	new_node->a_value = value;
-	_strcpy(new_node->a_node, name);
+	node->a_value = value;
+	_strcpy(node->a_node, name);
 
 	if (*head)
 	{
-		last = *head;
-		while (last->next != NULL)
-			last = last->next;
-		last->next = new_node;
+		prev = *head;
+		while (prev->next != NULL)
+			prev = last->next;
+		prev->next = node;
 	}
 	else
-		*head = new_node;
+		*head = node;
 
-	return (new_node);
+	return (node);
 }
 
 /**
@@ -57,26 +57,26 @@ alias_list *add_alias_end(alias_list **head, char *name, char *value)
 
 list_t *add_node_end(list_t **head, char *dir)
 {
-	list_t *new_node = malloc(sizeof(list_t));
-	list_t *last;
+	list_t *n_node = malloc(sizeof(list_t));
+	list_t *prev;
 
-	if (!new_node)
+	if (!n_node)
 		return (NULL);
 
-	new_node->node = dir;
-	new_node->next = NULL;
+	n_node->node = dir;
+	n_node->next = NULL;
 
 	if (*head)
 	{
-		last = *head;
-		while (last->next != NULL)
-			last = last->next;
-		last->next = new_node;
+		prev = *head;
+		while (prev->next != NULL)
+			prev = prev->next;
+		prev->next = n_node;
 	}
 	else
-		*head = new_node;
+		*head = n_node;
 
-	return (new_node);
+	return (n_node);
 }
 
 /**
@@ -88,15 +88,15 @@ list_t *add_node_end(list_t **head, char *dir)
 
 void free_alias_list(alias_list *head)
 {
-	alias_list *next;
+	alias_list *following;
 
 	while (head)
 	{
-		next = head->next;
+		following = head->next;
 		free(head->a_node);
 		free(head->a_value);
 		free(head);
-		head = next;
+		head = following;
 	}
 }
 
@@ -108,13 +108,13 @@ void free_alias_list(alias_list *head)
 
 void free_list(list_t *head)
 {
-	list_t *next;
+	list_t *following;
 
 	while (head)
 	{
-		next = head->next;
+		following = head->next;
 		free(head->node);
 		free(head);
-		head = next;
+		head = following;
 	}
 }
