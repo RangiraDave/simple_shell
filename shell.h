@@ -116,6 +116,8 @@ int shell_cd(char **args, char __attribute__((__unused__)) **front);
 int shell_alias(char **args, char __attribute__((__unused__)) **front);
 int shell_help(char **args, char __attribute__((__unused__)) **front);
 
+void print_alias(alias_list *alias);
+void set_alias(char *var_name, char *value);
 /* Functions For Environment */
 char **copy_env(void);
 void free_env(void);
